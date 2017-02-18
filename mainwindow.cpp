@@ -208,17 +208,17 @@ void MainWindow::on_pbReconstruct_clicked()
 
     delete h;
     h = new TH3F("h", "h",
-                       size_x,0,size_x,
-                       size_x,0,size_x,
-                       size_x,0,size_x);
+                 size_x, 0,size_x,
+                 size_y, 0,size_y,
+                 size_x, 0,size_x);
 
     minAct = 1e10;
     maxAct = -1e10;
     for (unsigned int iz=0; iz<size_x; iz++)
-        for (unsigned int iy=0; iy<size_x; iy++)
+        for (unsigned int iy=0; iy<size_y; iy++)
             for (unsigned int ix=0; ix<size_x; ix++)
             {
-                float val = activity_data[ix + iy*size_x + iz*(size_x*size_x)];
+                float val = activity_data[ix + iy*size_x + iz*(size_x*size_y)];
                 if (val == 0) continue;
                 h->Fill( ix, iy, iz, val );
                 if (val>maxAct) maxAct=val;
@@ -226,7 +226,7 @@ void MainWindow::on_pbReconstruct_clicked()
             }
     qDebug() << "Root histogram filled";
 
-    if (minAct==0) minAct = 0.0001;
+    if (minAct==0) minAct = (float)0.0001;
     ui->sbX->setMaximum(size_x-1);
     ui->hsSlice->setMaximum(size_x-1);
 
@@ -253,7 +253,7 @@ void MainWindow::on_pbShowSlice_clicked()
     case 0:
         sel = "xy";
         h->GetXaxis()->SetRange(0,size_x);
-        h->GetYaxis()->SetRange(0,size_x);
+        h->GetYaxis()->SetRange(0,size_y);
         h->GetZaxis()->SetRange(lim,lim);
         break;
     case 1:
@@ -265,7 +265,7 @@ void MainWindow::on_pbShowSlice_clicked()
     case 2:
         sel = "yz";
         h->GetXaxis()->SetRange(lim,lim);
-        h->GetYaxis()->SetRange(0,size_x);
+        h->GetYaxis()->SetRange(0,size_y);
         h->GetZaxis()->SetRange(0,size_x);
         break;
     }
@@ -389,8 +389,12 @@ void MainWindow::readConfigFromJson(QJsonObject &json)
         bool fOK = loadProjections(ProjectionFileNameTemplate);
         if (fOK)
         {
-            if (ProjectionStack.size() != size_x*size_y*n_cameras)
+            const int size = ProjectionStack.size();
+            if (size != size_x*size_y*n_cameras)
+            {
                 postWarning("Wrong projections data size!");
+                qDebug() << "Size:"<<size<<"expected:"<<size_x*size_y*n_cameras;
+            }
         }
         else
         {
