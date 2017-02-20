@@ -87,3 +87,5 @@ void ARootManager::CloseCanvas()
     if (gPad->GetCanvas())
       gPad->GetCanvas()->Close();
 }
+
+// Testing GitHub
