@@ -21,4 +21,6 @@ bool LoadFloatVectorsFromFile(QString FileName, QVector<float>* x, QVector<float
 const QString JsonToString(QJsonObject &json);
 const QJsonObject StringToJson(const QString string);
 
+// Find this comment, bro.
+
 #endif // UTILS_H
