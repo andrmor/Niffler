@@ -147,8 +147,6 @@ void MainWindow::on_pbReconstruct_clicked()
     unsigned int psf_size_y;    
     int use_attenuation = 0;
 
-    //if (activity_data) free(activity_data);
-    //activity_data = (float*) malloc(size_x*size_y*size_x*sizeof(float));
     delete [] activity_data;
     activity_data = new float[size_x*size_y*size_x];
 
@@ -168,7 +166,6 @@ void MainWindow::on_pbReconstruct_clicked()
             exit(11);
         }
 
-        //psf_data = (float*) malloc(psf_size_x*psf_size_y*size_x*sizeof(float));
         psf_data = new float[psf_size_x*psf_size_y*size_x];
 
         status = et_array_make_psf(psf_data, psf_size_x, psf_size_y, PSF_fwhm0, PSF_efficiency0, PSF_dist0, PSF_fwhm1, PSF_efficiency1, PSF_dist1, size_x);
@@ -192,8 +189,6 @@ void MainWindow::on_pbReconstruct_clicked()
     }
 
     //=================== Clear dynamic resources ===================
-    //if (use_psf) free(psf_data);
-    //if (use_attenuation) free(attenuation_data);
     delete [] psf_data;
     delete [] attenuation_data;
 
@@ -226,7 +221,7 @@ void MainWindow::on_pbReconstruct_clicked()
             }
     qDebug() << "Root histogram filled";
 
-    if (minAct==0) minAct = (float)0.0001;
+    if (minAct==0) minAct = 0.0001f;
     ui->sbX->setMaximum(size_x-1);
     ui->hsSlice->setMaximum(size_x-1);
 
@@ -270,7 +265,7 @@ void MainWindow::on_pbShowSlice_clicked()
         break;
     }
     TH2F* pr = (TH2F*) h->Project3D(sel);
-    if (!ui->cbSuppressZero->isChecked()) minAct = (float)(-0.001);
+    if (!ui->cbSuppressZero->isChecked()) minAct = -0.001f;
     pr->GetZaxis()->SetRangeUser(minAct, maxAct);
 
     pr->Draw(ui->leOpt->text().toLatin1());
